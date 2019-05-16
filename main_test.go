@@ -74,11 +74,11 @@ func TestInitHandler404(t *testing.T) {
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
-	type pair struct {
+	type param struct {
 		name, path, method string
 	}
 
-	pairs := []*pair{
+	params := []*param{
 		{name: "/ POST", path: "/", method: "POST"},
 		{name: "/endpoint GET", path: "/endpoint", method: "GET"},
 		{name: "/endpoint POST", path: "/endpoint", method: "POST"},
@@ -90,8 +90,8 @@ func TestInitHandler404(t *testing.T) {
 
 	const expectedCode = http.StatusNotFound
 
-	for i := range pairs {
-		p := pairs[i]
+	for i := range params {
+		p := params[i]
 		t.Run(p.name, func(t *testing.T) {
 			u := parseURL(t, server.URL)
 			u.Path = p.path
