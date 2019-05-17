@@ -1,41 +1,36 @@
 package main
 
 import (
-	"encoding/json"
+	"log"
 	"net/http"
+	"os"
+
+	"github.com/cs3238-tsuzu/coding_challenge_03/handler"
+	"github.com/cs3238-tsuzu/coding_challenge_03/model"
+
+	"database/sql"
+
+	_ "github.com/lib/pq"
 )
 
-// InitHandler initializes a handler for Hello world
-func InitHandler() http.Handler {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", func(rw http.ResponseWriter, req *http.Request) {
-		type ResponseBody struct {
-			Message string `json:"message"`
-		}
-
-		if req.Method != "GET" || req.URL.Path != "/" {
-			rw.WriteHeader(http.StatusNotFound)
-
-			rw.Write([]byte("404 not found"))
-
-			return
-		}
-
-		body := ResponseBody{
-			Message: "Hello World!!",
-		}
-
-		rw.Header().Add("Content-Type", "application/json")
-		rw.WriteHeader(http.StatusOK)
-		json.NewEncoder(rw).Encode(body)
-	})
-
-	return mux
-}
-
 func main() {
-	handler := InitHandler()
 
-	http.ListenAndServe(":80", handler)
+	connStr := os.Getenv("POSTGRES")
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	handler := handler.NewHandler(db)
+
+	uc := model.NewUserController(db)
+
+	if err := uc.Migrate(); err != nil {
+		log.Fatal("users table migration error", err)
+	}
+
+	handler.UserController = uc
+
+	http.ListenAndServe(":80", handler.GetHandler())
 }
