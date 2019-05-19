@@ -14,6 +14,9 @@
     - Run `docker-compose up -d`
     - Recommended: before starting, set secure password in `POSTGRES_PASSWORD` in `.env`
 
+## How to run tests
+- `docker-compose -f docker-compose.circleci.yml up -d`
+- `docker-compose -f docker-compose.circleci.yml exec app bash -c "cd /go/src/coding_challenge_03 && dockerize -wait tcp://db:5432 && go test -v -cover -race -coverprofile=./coverage.out ./..."`
 
 ## License
 - Under the MIT License
