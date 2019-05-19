@@ -112,7 +112,7 @@ func (uc *userController) DeleteUser(id int) error {
 
 func (uc *userController) Migrate() error {
 	query := `
-	CREATE TABLE IF NOT EXISTS USERS (
+	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(256),
 		email VARCHAR(256) NOT NULL,
