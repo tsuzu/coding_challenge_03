@@ -94,7 +94,8 @@ func (uc *userController) UpdateUser(u *User) (*User, error) {
 	ret := *u
 
 	err := uc.db.
-		QueryRow("UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING created_at, updated_at", u.Name, u.Email, u.ID).Scan(&ret.CreatedAt, &ret.UpdatedAt)
+		QueryRow("UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING created_at, updated_at", u.Name, u.Email, u.ID).
+		Scan(&ret.CreatedAt, &ret.UpdatedAt)
 
 	if err != nil {
 		return nil, err
@@ -111,21 +112,22 @@ func (uc *userController) DeleteUser(id int) error {
 
 func (uc *userController) Migrate() error {
 	query := `
-	create table if not exists users (
-		id serial primary key,
-		name varchar(256) not null,
-		email varchar(256) not null,
-		created_at timestamp not null default current_timestamp,
-		updated_at timestamp not null default current_timestamp
+	CREATE TABLE IF NOT EXISTS USERS (
+		id SERIAL PRIMARY KEY,
+		name VARCHAR(256),
+		email VARCHAR(256) NOT NULL,
+		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);
-	create or replace function set_update_time() returns opaque as '
-		begin
+	DROP TRIGGER IF EXISTS update_tri ON users;
+	DROP FUNCTION IF EXISTS set_update_time;
+	CREATE FUNCTION set_update_time() RETURNS OPAQUE AS '
+		BEGIN
 	    	new.updated_at := ''now'';
 	    	return new;
-  		end;
-	' language 'plpgsql';
-	drop trigger if exists update_tri on users;
-	create trigger update_tri before update on users for each row execute procedure set_update_time();
+  		END;
+	' LANGUAGE 'plpgsql';
+	CREATE TRIGGER update_tri BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE set_update_time();
 	`
 
 	if _, err := uc.db.Exec(query); err != nil {

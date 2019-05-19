@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -8,16 +10,25 @@ import (
 	"github.com/cs3238-tsuzu/coding_challenge_03/handler"
 	"github.com/cs3238-tsuzu/coding_challenge_03/model"
 
-	"database/sql"
-
 	_ "github.com/lib/pq"
 )
 
+var (
+	migrate = flag.Bool("migrate", false, "execute migration")
+	dsn     = flag.String("db", "", "data source name")
+)
+
 func main() {
+	flag.Parse()
+	dsn := *dsn
 
-	connStr := os.Getenv("POSTGRES")
+	dsnEnv := os.Getenv("POSTGRES_DSN")
 
-	db, err := sql.Open("postgres", connStr)
+	if len(dsn) == 0 {
+		dsn = dsnEnv
+	}
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,8 +37,10 @@ func main() {
 
 	uc := model.NewUserController(db)
 
-	if err := uc.Migrate(); err != nil {
-		log.Fatal("users table migration error", err)
+	if *migrate {
+		if err := uc.Migrate(); err != nil {
+			log.Fatal("users table migration error", err)
+		}
 	}
 
 	handler.UserController = uc

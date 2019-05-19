@@ -304,7 +304,11 @@ func TestHandlerUpdateUser(t *testing.T) {
 	defer server.Close()
 
 	dataset := &model.User{
-		ID: 10, Name: "taro", Email: "taro@example.com", CreatedAt: time.Now().Add(10 * time.Second), UpdatedAt: time.Now().Add(11 * time.Second),
+		ID:        10,
+		Name:      "taro",
+		Email:     "taro@example.com",
+		CreatedAt: time.Now().Add(10 * time.Second),
+		UpdatedAt: time.Now().Add(11 * time.Second),
 	}
 
 	uc.updateUser = func(u *model.User) (*model.User, error) {

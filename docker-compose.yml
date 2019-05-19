@@ -3,10 +3,10 @@ services:
   app:
     image: tsuzu/coding_challenge_03
     environment:
-      - POSTGRES=host=db port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=$POSTGRES_DB sslmode=disable
+      - POSTGRES_DSN=host=db port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=$POSTGRES_DB sslmode=disable
     ports:
       - 8080:80
-    command: /bin/dockerize -wait tcp://db:5432 /bin/api_server
+    command: /bin/dockerize -wait tcp://db:5432 /bin/api_server --migrate
   
   db:
     image: postgres:11
