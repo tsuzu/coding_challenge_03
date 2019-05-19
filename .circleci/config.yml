@@ -17,8 +17,9 @@ jobs:
       - run: 
           name: Test
           command: |
-            docker-compose -f docker-compose.debug.yml up -d
-            docker-compose -f docker-compose.debug.yml exec app bash -c "cd /go/src/coding_challenge_03 && sh ./docker-compose-debug-wait.sh && go test -v -cover -race -coverprofile=./coverage.out ./..."
+            docker-compose -f docker-compose.circleci.yml up -d
+            docker-compose -f docker-compose.circleci.yml exec app bash -c "cd /go/src/coding_challenge_03 && dockerize -wait tcp://db:5432 && go test -v -cover -race -coverprofile=./coverage.out ./..."
+            docker cp $(docker ps --filter name="app" -q):/go/src/coding_challenge_03/coverage.out .
       - run:
           name: Upload to coveralls
           command: |
