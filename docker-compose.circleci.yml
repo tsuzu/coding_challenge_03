@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile-debug
+      dockerfile: Dockerfile-circleci
     environment:
       - POSTGRES_DSN=host=db port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=$POSTGRES_DB sslmode=disable
       - GO111MODULE=on
