@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -98,6 +99,10 @@ func (uc *userController) UpdateUser(u *User) (*User, error) {
 		Scan(&ret.CreatedAt, &ret.UpdatedAt)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNoUser
+		}
+
 		return nil, err
 	}
 

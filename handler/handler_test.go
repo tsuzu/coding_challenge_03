@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strconv"
 	"testing"
 	"time"
@@ -14,17 +13,6 @@ import (
 	"github.com/cs3238-tsuzu/coding_challenge_03/handler"
 	"github.com/cs3238-tsuzu/coding_challenge_03/model"
 )
-
-func parseURL(t *testing.T, ul string) *url.URL {
-	t.Helper()
-	u, err := url.Parse(ul)
-
-	if err != nil {
-		t.Fatal("url parse error", err)
-	}
-
-	return u
-}
 
 type userController struct {
 	model.UserController
@@ -347,6 +335,44 @@ func TestHandlerUpdateUser(t *testing.T) {
 	}
 
 	compare(t, &b, dataset)
+}
+
+func TestHandlerUpdateUserNotFound(t *testing.T) {
+	server, uc, client := initAll(t)
+	defer server.Close()
+
+	dataset := &model.User{
+		ID:        10,
+		Name:      "taro",
+		Email:     "taro@example.com",
+		CreatedAt: time.Now().Add(10 * time.Second),
+		UpdatedAt: time.Now().Add(11 * time.Second),
+	}
+
+	uc.updateUser = func(u *model.User) (*model.User, error) {
+		return nil, model.ErrNoUser
+	}
+
+	buf := bytes.NewBuffer(nil)
+
+	json.NewEncoder(buf).Encode(dataset)
+
+	req, err := http.NewRequest("PUT", server.URL+"/users/"+strconv.Itoa(dataset.ID), buf)
+
+	if err != nil {
+		t.Fatal("new requesrt error", err)
+	}
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		t.Fatal("http put error", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNotFound {
+		t.Fatal("status code should be 404, but got", resp.StatusCode)
+	}
 }
 
 func TestHandlerDeleteUser(t *testing.T) {

@@ -105,6 +105,14 @@ func NewHandler(db model.DB) *Handler {
 		res, err := handler.UserController.UpdateUser(&user)
 
 		if err != nil {
+			if err == model.ErrNoUser {
+				c.JSON(http.StatusNotFound, gin.H{
+					"message": "not found",
+				})
+
+				return
+			}
+
 			c.String(http.StatusInternalServerError, "internal server error")
 
 			return
