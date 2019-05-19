@@ -16,11 +16,18 @@ import (
 var (
 	migrate = flag.Bool("migrate", false, "execute migration")
 	dsn     = flag.String("db", "", "data source name")
+	help    = flag.Bool("help", false, "Show usage")
 )
 
 func main() {
 	flag.Parse()
 	dsn := *dsn
+
+	if *help {
+		flag.Usage()
+
+		return
+	}
 
 	dsnEnv := os.Getenv("POSTGRES_DSN")
 
