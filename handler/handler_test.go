@@ -142,6 +142,7 @@ func compare(t *testing.T, b *body, m *model.User) {
 }
 
 func TestHandlerGetUsersSuccess(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
@@ -183,6 +184,7 @@ func TestHandlerGetUsersSuccess(t *testing.T) {
 }
 
 func TestHandlerGetUsersError(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
@@ -205,6 +207,7 @@ func TestHandlerGetUsersError(t *testing.T) {
 }
 
 func TestHandlerGetUser(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
@@ -241,6 +244,7 @@ func TestHandlerGetUser(t *testing.T) {
 }
 
 func TestHandlerAddUser(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
@@ -288,6 +292,7 @@ func TestHandlerAddUser(t *testing.T) {
 }
 
 func TestHandlerUpdateUser(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
@@ -338,6 +343,7 @@ func TestHandlerUpdateUser(t *testing.T) {
 }
 
 func TestHandlerUpdateUserNotFound(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
@@ -376,6 +382,7 @@ func TestHandlerUpdateUserNotFound(t *testing.T) {
 }
 
 func TestHandlerDeleteUser(t *testing.T) {
+	t.Parallel()
 	server, uc, client := initAll(t)
 	defer server.Close()
 
