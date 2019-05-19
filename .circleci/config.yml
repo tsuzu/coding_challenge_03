@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.12
+        user: root
+    working_directory: /go/src/coding_challenge_03
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: 
+          name: Build
+          command: |
+            go get -v -t ./...
+      - run: 
+          name: Test
+          command: |
+            docker-compose -f docker-compose.debug.yml up -d
+            docker-compose -f docker-compose.debug.yml exec app bash -c "cd /go/src/coding_challenge_03 && docker-compose-debug-wait.sh && go test -v -cover -race -coverprofile=./coverage.out ./..."            
+      - run:
+          name: Upload to coveralls
+          command: |
+            go get github.com/mattn/goveralls
+            goveralls -coverprofile=./coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
