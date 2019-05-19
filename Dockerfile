@@ -22,6 +22,7 @@ FROM scratch
 
 ARG PACKAGE_NAME
 
+COPY --from=golang:1.12 /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=build /go/bin/${PACKAGE_NAME} /bin/api_server
 COPY --from=dockerize /usr/local/bin/dockerize /bin/
 CMD [ "/bin/api_server" ]
