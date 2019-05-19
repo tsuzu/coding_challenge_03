@@ -18,7 +18,7 @@ jobs:
           name: Test
           command: |
             docker-compose -f docker-compose.debug.yml up -d
-            docker-compose -f docker-compose.debug.yml exec app bash -c "cd /go/src/coding_challenge_03 && ./docker-compose-debug-wait.sh && go test -v -cover -race -coverprofile=./coverage.out ./..."            
+            docker-compose -f docker-compose.debug.yml exec app bash -c "cd /go/src/coding_challenge_03 && sh ./docker-compose-debug-wait.sh && go test -v -cover -race -coverprofile=./coverage.out ./..."
       - run:
           name: Upload to coveralls
           command: |
