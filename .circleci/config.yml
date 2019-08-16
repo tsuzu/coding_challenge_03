@@ -3,7 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-        user: root
     working_directory: /go/src/coding_challenge_03
     environment:
       GO111MODULE: "on"
